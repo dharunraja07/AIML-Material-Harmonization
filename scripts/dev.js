@@ -20,19 +20,26 @@ console.log(`[Backend] Python executable: ${pythonExe}`);
 console.log(`[Backend] API starting at:   http://127.0.0.1:8000`);
 console.log(`[Frontend] UI starting at:   http://localhost:3000\n`);
 
-// 2. Spawn FastAPI backend
+// 2. Spawn FastAPI backend (shell: false prevents cmd.exe space-in-path issues on Windows)
 const backend = spawn(pythonExe, ['-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', '8000', '--reload'], {
   cwd: rootDir,
+  stdio: 'inherit',
+  shell: false,
+});
+
+backend.on('error', (err) => {
+  console.error('[Backend Error]:', err);
+});
+
+// 3. Spawn Next.js frontend
+const frontend = spawn('npm', ['run', 'dev'], {
+  cwd: webDir,
   stdio: 'inherit',
   shell: true,
 });
 
-// 3. Spawn Next.js frontend
-const npmCmd = isWin ? 'npm.cmd' : 'npm';
-const frontend = spawn(npmCmd, ['run', 'dev'], {
-  cwd: webDir,
-  stdio: 'inherit',
-  shell: true,
+frontend.on('error', (err) => {
+  console.error('[Frontend Error]:', err);
 });
 
 // Handle termination & clean up child processes
@@ -41,7 +48,7 @@ function cleanup() {
   if (backend && !backend.killed) {
     try {
       if (isWin && backend.pid) {
-        spawn('taskkill', ['/pid', backend.pid.toString(), '/f', '/t']);
+        spawn('taskkill', ['/pid', backend.pid.toString(), '/f', '/t'], { shell: false });
       } else {
         backend.kill('SIGINT');
       }
@@ -50,7 +57,7 @@ function cleanup() {
   if (frontend && !frontend.killed) {
     try {
       if (isWin && frontend.pid) {
-        spawn('taskkill', ['/pid', frontend.pid.toString(), '/f', '/t']);
+        spawn('taskkill', ['/pid', frontend.pid.toString(), '/f', '/t'], { shell: false });
       } else {
         frontend.kill('SIGINT');
       }
