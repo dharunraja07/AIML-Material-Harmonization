@@ -77,7 +77,7 @@ export type BenchmarkJob = {
 }
 
 const configuredBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
-const baseUrl = (configuredBaseUrl || (typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.hostname}:8000` : 'http://127.0.0.1:8000')).replace(/\/$/, '')
+const baseUrl = (configuredBaseUrl || (typeof window !== 'undefined' && window.location.hostname !== 'localhost' ? `${window.location.protocol}//${window.location.hostname}:8000` : 'http://127.0.0.1:8000')).replace(/\/$/, '')
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response
