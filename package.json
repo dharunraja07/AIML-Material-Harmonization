@@ -2,8 +2,9 @@
   "name": "material-harmonization-workspace",
   "private": true,
   "scripts": {
-    "dev": "npm --prefix web run dev",
-    "web": "npm --prefix web run dev",
+    "dev": "node scripts/dev.js",
+    "backend": "uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload",
+    "frontend": "npm --prefix web run dev",
     "build": "npm --prefix web run build",
     "start": "npm --prefix web run start"
   }
