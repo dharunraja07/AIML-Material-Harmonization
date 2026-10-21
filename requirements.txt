@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+pydantic-settings
+pytest
+httpx
+python-multipart
+pandas
+openpyxl
+xlrd
+
+# PostgreSQL + pgvector adapter and multilingual embedding model:
+sqlalchemy
+psycopg[binary]
+sentence-transformers
